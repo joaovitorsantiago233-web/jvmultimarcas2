@@ -7,6 +7,51 @@ let cupomAplicado = null;
 let produtosFiltrados = [];
 let cuponsDisponiveis = [];
 
+// ======================== FUNÇÕES DE PERSISTÊNCIA (salvar e carregar) ========================
+function salvarCarrinho() {
+    localStorage.setItem("carrinho_jv", JSON.stringify(carrinho));
+}
+
+function carregarCarrinho() {
+    const saved = localStorage.getItem("carrinho_jv");
+    if (saved) {
+        carrinho = JSON.parse(saved);
+    } else {
+        carrinho = [];
+    }
+    atualizarCarrinhoContador();
+}
+
+function salvarCupomAplicado() {
+    if (cupomAplicado) {
+        localStorage.setItem("cupom_aplicado_jv", JSON.stringify(cupomAplicado));
+    } else {
+        localStorage.removeItem("cupom_aplicado_jv");
+    }
+}
+
+function carregarCupomAplicado() {
+    const saved = localStorage.getItem("cupom_aplicado_jv");
+    if (saved) {
+        cupomAplicado = JSON.parse(saved);
+        const statusDiv = document.getElementById("cupomStatus");
+        if (statusDiv && cupomAplicado) {
+            let descontoTexto = "";
+            if (cupomAplicado.tipo === "percentual") {
+                descontoTexto = `${cupomAplicado.valor}% de desconto`;
+            } else if (cupomAplicado.tipo === "fixo") {
+                descontoTexto = `R$ ${cupomAplicado.valor.toFixed(2)} de desconto`;
+            }
+            statusDiv.innerHTML = `✅ Cupom aplicado! ${descontoTexto}`;
+            statusDiv.className = "cupom-status sucesso";
+            const codigoInput = document.getElementById("codigoCupom");
+            if (codigoInput) codigoInput.value = cupomAplicado.codigo;
+        }
+    } else {
+        cupomAplicado = null;
+    }
+}
+
 function carregarCupons() {
     const saved = localStorage.getItem("cupons_jv");
     if (saved) {
@@ -341,6 +386,7 @@ function adicionarAoCarrinho(id, tamanho) {
     } else {
         carrinho.push({ id: prod.id, nome: prod.nome, preco: prod.preco, tamanho: tamanho, qtd: 1 });
     }
+    salvarCarrinho();
     atualizarCarrinhoContador();
     alert(`✅ ${prod.nome} (${tamanho}) adicionado!`);
 }
@@ -359,8 +405,12 @@ function limparCarrinho() {
     if (confirm("Tem certeza que deseja limpar todo o carrinho?")) {
         carrinho = [];
         cupomAplicado = null;
+        salvarCarrinho();
+        salvarCupomAplicado();
         atualizarCarrinhoContador();
         mostrarCarrinho();
+        document.getElementById("codigoCupom").value = "";
+        document.getElementById("cupomStatus").innerHTML = "";
         alert("✅ Carrinho limpo com sucesso!");
     }
 }
@@ -381,8 +431,10 @@ function aplicarCupom() {
         statusDiv.innerHTML = "❌ Cupom inválido!";
         statusDiv.className = "cupom-status erro";
         cupomAplicado = null;
+        salvarCupomAplicado();
     } else {
         cupomAplicado = cupom;
+        salvarCupomAplicado();
         let descontoTexto = "";
         if (cupom.tipo === "percentual") {
             descontoTexto = `${cupom.valor}% de desconto`;
@@ -479,6 +531,7 @@ function mostrarCarrinho() {
 
 window.removerItemCarrinho = (idx) => {
     carrinho.splice(idx, 1);
+    salvarCarrinho();
     atualizarCarrinhoContador();
     mostrarCarrinho();
 };
@@ -488,9 +541,6 @@ function finalizarCompra() {
         alert("❌ Carrinho vazio!");
         return;
     }
-    cupomAplicado = null;
-    document.getElementById("codigoCupom").value = "";
-    document.getElementById("cupomStatus").innerHTML = "";
     document.getElementById("cartModal").style.display = "none";
     document.getElementById("checkoutModal").style.display = "flex";
     atualizarResumoPedido();
@@ -769,10 +819,15 @@ Aguardamos confirmação do pedido.`;
         const msgCodificada = encodeURIComponent(mensagem);
         window.open(`https://wa.me/5532984641252?text=${msgCodificada}`, "_blank");
         
+        // Limpar carrinho após enviar pedido
         carrinho = [];
         cupomAplicado = null;
+        salvarCarrinho();
+        salvarCupomAplicado();
         atualizarCarrinhoContador();
         document.getElementById("checkoutModal").style.display = "none";
+        document.getElementById("codigoCupom").value = "";
+        document.getElementById("cupomStatus").innerHTML = "";
         alert("✅ Pedido enviado! Em breve entraremos em contato.");
     };
 }
@@ -820,6 +875,7 @@ document.querySelectorAll(".nav-btn").forEach(btn => {
 // ======================== INICIAR ========================
 carregarCupons();
 carregarProdutos();
+carregarCarrinho();      // Recupera carrinho salvo
+carregarCupomAplicado(); // Recupera cupom aplicado
 renderizarPagina("home");
-atualizarCarrinhoContador();
 configurarCarrossel();
