@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JV Multimarcas | Loja Esportiva</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+<header class="header">
+    <div class="header-container">
+        <div class="logo">
+            <img src="logo.png" alt="JV Multimarcas" onerror="this.src='https://placehold.co/60x60/1a1a1a/f0b90b?text=JV'">
+            <h1>JV MULTIMARCAS</h1>
+        </div>
+        <nav class="nav">
+            <button class="nav-btn" data-page="home">Início</button>
+            <button class="nav-btn" data-page="camisas_times">Camisas de Times</button>
+            <button class="nav-btn" data-page="camisas_esportivas">Camisas Esportivas</button>
+            <button class="nav-btn" data-page="shorts_times">Shorts de Time</button>
+            <button class="nav-btn" data-page="shorts_esportivos">Shorts Esportivos</button>
+            <button class="nav-btn" data-page="calcas">Calça Esportiva</button>
+            <button class="nav-btn" data-page="blusas">Blusa de Frio</button>
+        </nav>
+        <div class="cart" id="cartBtn">
+            <i class="fas fa-shopping-cart"></i>
+            <span id="cartCount">0</span>
+        </div>
+    </div>
+</header>
+
+<main id="main-content"></main>
+
+<footer class="footer">
+    <div class="admin-access" id="adminAccessBtn">
+        <i class="fas fa-home"></i>
+        <span>Painel Administrativo</span>
+    </div>
+    <p>JV Multimarcas © 2025 - Qualidade e paixão pelo esporte</p>
+</footer>
+
+<!-- Botão Voltar ao Topo -->
+<button id="backToTop" class="back-to-top" title="Voltar ao topo">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- MODAL CARRINHO -->
+<div id="cartModal" class="modal">
+    <div class="modal-card">
+        <span class="close-modal" data-close="cartModal">&times;</span>
+        <h2><i class="fas fa-shopping-bag"></i> Meu Carrinho</h2>
+        <div id="cartItems"></div>
+        <div id="cartTotal"></div>
+        <div style="display: flex; gap: 10px; margin-top: 15px;">
+            <button id="limparCarrinhoBtn" class="btn-danger">Limpar Carrinho</button>
+            <button id="finalizarCompraBtn" class="btn-gold" style="flex:1;">Finalizar Compra</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL CHECKOUT -->
+<div id="checkoutModal" class="modal">
+    <div class="modal-card checkout-card">
+        <span class="close-modal" data-close="checkoutModal">&times;</span>
+        <h2>📋 Finalizar Pedido</h2>
+        
+        <form id="checkoutForm">
+            <div class="form-section">
+                <h3>Dados Pessoais</h3>
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label>Nome completo *</label>
+                        <input type="text" id="clienteNome" required placeholder="Digite seu nome completo">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>CPF *</label>
+                        <input type="text" id="clienteCpf" required placeholder="000.000.000-00" maxlength="14">
+                    </div>
+                    <div class="form-group">
+                        <label>Telefone *</label>
+                        <input type="tel" id="clienteTelefone" required placeholder="(DDD) 9 9999-9999">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- CUPOM DE DESCONTO -->
+            <div class="form-section">
+                <h3>Cupom de Desconto</h3>
+                <div class="form-row">
+                    <div class="form-group" style="flex:3;">
+                        <input type="text" id="codigoCupom" placeholder="Digite seu cupom">
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <button type="button" id="aplicarCupomBtn" class="btn-gold" style="width:100%; padding:10px;">Aplicar</button>
+                    </div>
+                </div>
+                <div id="cupomStatus" class="cupom-status"></div>
+            </div>
+            
+            <div class="form-section">
+                <h3>Opção de Entrega</h3>
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <select id="tipoEntrega" required>
+                            <option value="">Selecione uma opção</option>
+                            <option value="entrega">🚚 Entrega em domicílio</option>
+                            <option value="retirada">🏪 Retirar na loja</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="enderecoSection" style="display:none;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>CEP *</label>
+                            <input type="text" id="cep" placeholder="00000-000" maxlength="9">
+                        </div>
+                        <div class="form-group">
+                            <label>Número *</label>
+                            <input type="text" id="numero" placeholder="Nº">
+                        </div>
+                    </div>
+                    <div id="cepStatus" class="cep-status"></div>
+                    
+                    <div id="enderecoCompleto" style="display:none;">
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label>Rua</label>
+                                <input type="text" id="rua" readonly>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Bairro</label>
+                                <input type="text" id="bairro" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Cidade</label>
+                                <input type="text" id="cidade" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>UF</label>
+                                <input type="text" id="estado" readonly>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label>Complemento</label>
+                                <input type="text" id="complemento" placeholder="Apto, bloco, casa...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="retiradaSection" style="display:none;">
+                    <div class="info-box">
+                        <i class="fas fa-store"></i>
+                        <div>
+                            <strong>Endereço da Loja:</strong><br>
+                            Rua Mister Moore, Nº70 - Centro<br>
+                            Juiz de Fora - MG<br>
+                            <strong>Horário:</strong> Segunda a Sexta, 9h às 18h
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3>Forma de Pagamento</h3>
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <select id="pagamento" required>
+                            <option value="">Selecione</option>
+                            <option value="dinheiro">💰 Dinheiro</option>
+                            <option value="pix">📱 PIX</option>
+                            <option value="debito">💳 Débito</option>
+                            <option value="credito">💳 Crédito</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Troco para dinheiro -->
+                <div id="trocoSection" style="display:none;">
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label>Valor recebido (para troco)</label>
+                            <input type="number" id="valorRecebido" placeholder="Digite o valor recebido" step="0.01">
+                        </div>
+                    </div>
+                    <div id="trocoInfo" class="troco-info"></div>
+                </div>
+                
+                <div id="parcelasGroup" style="display:none;">
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label>Parcelamento</label>
+                            <select id="parcelas"></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3>Observação (opcional)</h3>
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <textarea id="observacao" rows="3" placeholder="Alguma informação adicional?"></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section order-summary">
+                <h3>Resumo do Pedido</h3>
+                <div id="resumoItens"></div>
+                <div id="resumoSubtotal"></div>
+                <div id="resumoDesconto"></div>
+                <div id="resumoTotal"></div>
+            </div>
+            
+            <button type="submit" class="btn-gold btn-large">✅ Enviar Pedido via WhatsApp</button>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL CARROSSEL -->
+<div id="carrosselModal" class="modal">
+    <div class="modal-card carrossel-card">
+        <span class="close-modal" id="closeCarrossel">&times;</span>
+        <div class="carrossel-container">
+            <button id="carrosselPrev"><i class="fas fa-chevron-left"></i></button>
+            <img id="carrosselImage" src="" alt="Galeria de fotos">
+            <button id="carrosselNext"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <p id="carrosselContador"></p>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

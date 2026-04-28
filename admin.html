@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | JV Multimarcas</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background: #0a0a0a;
+            padding: 2rem;
+        }
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0b90b;
+        }
+        .admin-header h1 {
+            color: #f0b90b;
+        }
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: #111;
+            padding: 2rem;
+            border-radius: 24px;
+            text-align: center;
+        }
+        .login-container input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: #1f1f1f;
+            border: 1px solid #333;
+            color: white;
+            border-radius: 24px;
+        }
+        .product-form-area {
+            background: #111;
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            border: 1px solid #2c2c2c;
+        }
+        .product-form-area h3 {
+            margin-bottom: 1rem;
+            color: #f0b90b;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .form-grid input, .form-grid select, .form-grid textarea {
+            width: 100%;
+            padding: 10px;
+            background: #1f1f1f;
+            border: 1px solid #333;
+            color: white;
+            border-radius: 12px;
+        }
+        .estoque-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+        .estoque-grid input {
+            text-align: center;
+            padding: 10px;
+            background: #1f1f1f;
+            border: 1px solid #333;
+            color: white;
+            border-radius: 12px;
+        }
+        .btn-save {
+            background: #28a745;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        .btn-cancel {
+            background: #6c757d;
+            margin-left: 10px;
+        }
+        .produtos-list, .cupons-list {
+            margin-top: 2rem;
+        }
+        .produto-item, .cupom-item {
+            background: #111;
+            border: 1px solid #2c2c2c;
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .produto-info, .cupom-info {
+            flex: 1;
+        }
+        .produto-buttons button, .cupom-buttons button {
+            margin-left: 8px;
+            padding: 6px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        .btn-edit { background: #ffc107; color: #000; border: none; }
+        .btn-delete { background: #dc3545; color: white; border: none; }
+        .btn-add { background: #f0b90b; color: #000; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; margin-bottom: 1rem; }
+        .admin-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        .admin-tab {
+            background: #1f1f1f;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            color: white;
+        }
+        .admin-tab.active {
+            background: #f0b90b;
+            color: #000;
+        }
+        .tab-pane {
+            display: none;
+        }
+        .tab-pane.active {
+            display: block;
+        }
+        .admin-list-item {
+            background: #111;
+            border: 1px solid #2c2c2c;
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            background: #1f1f1f;
+            border: 1px solid #333;
+            color: white;
+            border-radius: 12px;
+        }
+        .cupom-tipo {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .cupom-tipo label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div id="loginArea" class="login-container">
+    <h2>🔐 Área Administrativa</h2>
+    <input type="text" id="adminUser" placeholder="Usuário">
+    <input type="password" id="adminPass" placeholder="Senha">
+    <button id="loginBtn" class="btn-gold" style="width:100%;">Entrar</button>
+    <p style="margin-top:1rem; color:#888;">Login: E32329 | Senha: 1234</p>
+</div>
+
+<div id="adminPanel" style="display:none;">
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1><i class="fas fa-cogs"></i> Painel Administrativo - JV Multimarcas</h1>
+            <button id="logoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Sair</button>
+        </div>
+        
+        <div class="admin-tabs">
+            <button class="admin-tab active" data-tab="produtos">📦 Produtos</button>
+            <button class="admin-tab" data-tab="cupons">🏷️ Cupons</button>
+            <button class="admin-tab" data-tab="usuarios">👥 Administradores</button>
+        </div>
+        
+        <!-- ABA PRODUTOS -->
+        <div id="tabProdutos" class="tab-pane active">
+            <button id="showFormBtn" class="btn-add"><i class="fas fa-plus"></i> Novo Produto</button>
+            
+            <div id="productFormArea" class="product-form-area" style="display:none;">
+                <h3>Cadastrar / Editar Produto</h3>
+                <div class="form-grid">
+                    <input type="text" id="prodNome" placeholder="Nome do produto">
+                    <input type="number" id="prodPreco" placeholder="Preço (R$)" step="0.01">
+                    <select id="prodCategoria">
+                        <option value="camisas_times">Camisas de Times</option>
+                        <option value="camisas_esportivas">Camisas Esportivas</option>
+                        <option value="shorts_times">Shorts de Time</option>
+                        <option value="shorts_esportivos">Shorts Esportivos</option>
+                        <option value="calcas">Calça Esportiva</option>
+                        <option value="blusas">Blusa de Frio</option>
+                    </select>
+                    <select id="prodDestaque">
+                        <option value="false">Não é destaque</option>
+                        <option value="true">Produto Destaque</option>
+                    </select>
+                </div>
+                
+                <div class="estoque-grid">
+                    <input type="number" id="estoqueP" placeholder="Estoque P">
+                    <input type="number" id="estoqueM" placeholder="Estoque M">
+                    <input type="number" id="estoqueG" placeholder="Estoque G">
+                    <input type="number" id="estoqueGG" placeholder="Estoque GG">
+                </div>
+                
+                <textarea id="prodImagens" rows="4" placeholder="URLs das imagens (uma por linha)&#10;Ex:&#10;https://i.ibb.co/seu-codigo/imagem1.jpg&#10;https://i.ibb.co/seu-codigo/imagem2.jpg"></textarea>
+                
+                <div>
+                    <button id="saveProductBtn" class="btn-save">💾 Salvar Produto</button>
+                    <button id="cancelFormBtn" class="btn-save btn-cancel">❌ Cancelar</button>
+                </div>
+            </div>
+            
+            <div id="produtosList" class="produtos-list"></div>
+        </div>
+        
+        <!-- ABA CUPONS -->
+        <div id="tabCupons" class="tab-pane">
+            <div class="product-form-area">
+                <h3>Criar Novo Cupom</h3>
+                <div class="form-grid">
+                    <input type="text" id="cupomCodigo" placeholder="Código do cupom (ex: DESCONTO10)">
+                    <div class="cupom-tipo">
+                        <label>
+                            <input type="radio" name="cupomTipo" value="percentual" checked> Percentual (%)
+                        </label>
+                        <label>
+                            <input type="radio" name="cupomTipo" value="fixo"> Valor Fixo (R$)
+                        </label>
+                    </div>
+                    <input type="number" id="cupomValor" placeholder="Valor do desconto" step="0.01">
+                </div>
+                <button id="criarCupomBtn" class="btn-save">➕ Criar Cupom</button>
+            </div>
+            
+            <h3>Cupons Existentes</h3>
+            <div id="cuponsList" class="cupons-list"></div>
+        </div>
+        
+        <!-- ABA USUÁRIOS -->
+        <div id="tabUsuarios" class="tab-pane">
+            <div class="product-form-area">
+                <h3>Criar Novo Administrador</h3>
+                <div class="form-grid">
+                    <input type="text" id="novoAdminLogin" placeholder="Usuário">
+                    <input type="password" id="novoAdminSenha" placeholder="Senha">
+                </div>
+                <button id="criarAdminBtn" class="btn-save">➕ Criar Administrador</button>
+            </div>
+            
+            <h3>Administradores Existentes</h3>
+            <div id="adminsList"></div>
+        </div>
+    </div>
+</div>
+
+<script src="admin.js"></script>
+</body>
+</html>
